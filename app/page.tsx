@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import EvolutionHero from './components/sections/EvolutionHero'
 import GratitudeGrid from './components/sections/GratitudeGrid'
 import GlobalMesh from './components/sections/GlobalMesh'
-import DieselGoDemo from './components/sections/DieselGoDemo'
+import DieselFlowDemo from './components/sections/DieselGoDemo'
 import SonicMixerDemo from './components/sections/SonicMixerDemo'
 import HardwareShowreel from './components/sections/HardwareShowreel'
 import Navigation from './components/Navigation'
@@ -33,7 +33,7 @@ export default function Home() {
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
       >
-        <DieselGoDemo />
+        <DieselFlowDemo />
       </motion.div>
 
       <motion.div

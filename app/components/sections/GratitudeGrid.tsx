@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { MediaLoader } from '@/app/components/MediaLoader'
 
 const GratitudeGrid = () => {
   const mentorCategories = [
@@ -16,7 +17,7 @@ const GratitudeGrid = () => {
       role: 'The Tech Architects',
       emoji: '🏗️',
       impact:
-        'The engineers who taught me to see code as a craft, enabling the 245-hour precision required for systems like Diesel GO.',
+        'The engineers who taught me to see code as a craft, enabling the 245-hour precision required for systems like Diesel Flow.',
       theme: '#10b981',
       contribution: 'Engineering discipline & systems thinking',
     },
@@ -51,8 +52,9 @@ const GratitudeGrid = () => {
         >
           {/* Background street art accent */}
           <div className="absolute -top-20 -right-32 opacity-20 pointer-events-none hidden lg:block">
-            <img
-              src="/images/street-art-portrait.png"
+            <MediaLoader
+              folder="images"
+              fallbackUrl="/images/street-art-portrait.png"
               alt="Street art accent"
               className="w-96 h-96 object-cover rounded-full blur-sm"
             />

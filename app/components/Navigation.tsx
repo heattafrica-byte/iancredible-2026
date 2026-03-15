@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 
 interface NavigationProps {
   currentPath: string
@@ -8,10 +9,13 @@ interface NavigationProps {
 }
 
 export default function Navigation({ currentPath, onNavigate }: NavigationProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
+      setMobileMenuOpen(false) // Close menu after clicking
     }
   }
 
@@ -55,9 +59,47 @@ export default function Navigation({ currentPath, onNavigate }: NavigationProps)
           ))}
         </div>
 
-        {/* Mobile Menu Indicator */}
-        <div className="md:hidden text-neon-cyan text-xl">≡</div>
+        {/* Mobile Menu Button */}
+        <motion.button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden text-neon-cyan text-2xl hover:text-neon-blue transition-colors py-2 px-3"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {mobileMenuOpen ? '✕' : '≡'}
+        </motion.button>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <motion.div
+          className="md:hidden glass border-t border-neon-cyan/30 bg-dark-bg/95"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+        >
+          <div className="px-6 py-4 space-y-4">
+            {[
+              { id: 'story', label: '📖 Story' },
+              { id: 'diesel', label: '⚡ Tech' },
+              { id: 'sonic', label: '🎵 Audio' },
+              { id: 'hardware', label: '⚙️ Hardware' },
+              { id: 'gratitude', label: '🤝 Community' },
+              { id: 'global', label: '🌐 Connect' },
+            ].map((item) => (
+              <motion.button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className="block w-full text-left text-sm font-semibold text-gray-400 hover:text-neon-cyan transition-colors py-2 px-3 rounded"
+                whileHover={{ x: 5, color: '#00d9ff' }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {item.label}
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+      )}
     </motion.nav>
   )
 }

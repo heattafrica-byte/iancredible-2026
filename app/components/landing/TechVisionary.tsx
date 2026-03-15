@@ -73,7 +73,7 @@ export default function TechVisionary({ onBack }: TechVisionaryProps) {
       case 'overview':
         return (
           <ContentSection
-            title="Diesel GO - Fuel Depot Management System"
+            title="Diesel Flow - Fuel Depot Management System"
             content={
               <>
                 <p className="text-lg">
@@ -287,7 +287,7 @@ export default function TechVisionary({ onBack }: TechVisionaryProps) {
           </motion.button>
           <h1 className="text-5xl md:text-6xl font-black neon-glow mb-4">TECH VISIONARY</h1>
           <p className="text-gray-400 text-lg">
-            Diesel GO: Enterprise fuel depot management system built for scale
+            Diesel Flow: Enterprise fuel depot management system built for scale
           </p>
         </motion.div>
 

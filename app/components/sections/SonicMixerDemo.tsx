@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import { MediaLoader } from '@/app/components/MediaLoader'
 
 const SonicMixerDemo = () => {
   const [bars, setBars] = useState<number[]>(Array(20).fill(0))
@@ -369,13 +370,14 @@ const SonicMixerDemo = () => {
             {/* IntelliMix AI Visualization */}
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="relative h-64 w-full">
-                <img
-                  src="/images/intellimix-ai.png"
+                <MediaLoader
+                  folder="images"
+                  fallbackUrl="/images/intellimix-ai.png"
                   alt="IntelliMix AI Mixing Software"
                   className="w-full h-full object-cover rounded-lg shadow-lg shadow-neon-pink/50"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/80 to-transparent rounded-lg flex items-end p-4">
-                  <p className="text-sm font-bold text-neon-pink text-center">AI-powered mixing & mastering</p>
+                  <p className="text-sm font-bold text-neon-pink text-center">AI-powered mixing &mastering</p>
                 </div>
               </div>
             </div>

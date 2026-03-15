@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 
-const DieselGoDemo = () => {
+const DieselFlowDemo = () => {
   const [activeTab, setActiveTab] = useState('overview')
 
   const tabs = [
@@ -15,7 +15,7 @@ const DieselGoDemo = () => {
   const tabContent = {
     overview: (
       <div className="space-y-6 scrollable-md">
-        <h3 className="text-2xl font-bold text-neon-cyan mb-4">Diesel GO: Fuel Depot Management System</h3>
+        <h3 className="text-2xl font-bold text-neon-cyan mb-4">Diesel Flow: Fuel Depot Management System</h3>
         <p className="text-gray-300 leading-relaxed">
           A production-ready enterprise portal for managing fuel depot operations. Built with tested architecture, rigorously reviewed code, and comprehensive documentation.
         </p>
@@ -46,7 +46,7 @@ const DieselGoDemo = () => {
             <p className="text-5xl mb-4">🎮</p>
             <p className="text-gray-400 mb-2">Live dashboard simulation loading...</p>
             <p className="text-xs text-gray-500">
-              This would be an interactive version of the Diesel GO portal showing:
+              This would be an interactive version of the Diesel Flow portal showing:
             </p>
             <ul className="text-left mt-4 text-sm text-gray-300 space-y-1 inline-block">
               <li>✓ Real-time fuel inventory tracking</li>
@@ -104,7 +104,7 @@ const DieselGoDemo = () => {
           viewport={{ once: true }}
         >
           <h2 className="text-5xl md:text-6xl font-black mb-4">
-            <span className="neon-glow">DIESEL GO</span>
+            <span className="neon-glow">DIESEL FLOW</span>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Enterprise Software Demonstration: The precision and reliability you can expect from my builds
@@ -171,4 +171,4 @@ const DieselGoDemo = () => {
   )
 }
 
-export default DieselGoDemo
+export default DieselFlowDemo

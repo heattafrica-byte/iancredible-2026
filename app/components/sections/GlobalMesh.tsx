@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { MediaLoader } from '@/app/components/MediaLoader'
 
 const GlobalMesh = () => {
   const platforms = [
@@ -87,13 +88,11 @@ const GlobalMesh = () => {
         >
           {/* Cyberpunk portrait accent */}
           <div className="absolute -top-32 -left-40 opacity-15 pointer-events-none hidden lg:block">
-            <img
-              src="/images/cyberpunk-neon-portrait.png"
+            <MediaLoader
+              folder="images"
+              fallbackUrl="/images/cyberpunk-neon-portrait.png"
               alt="Cyberpunk visual accent"
               className="w-80 h-80 object-cover rounded-full blur-lg"
-              style={{
-                filter: 'drop-shadow(0 0 40px rgba(0, 217, 255, 0.3))',
-              }}
             />
           </div>
 

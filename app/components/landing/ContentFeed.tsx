@@ -86,7 +86,7 @@ export default function ContentFeed() {
     {
       id: '3',
       type: 'project',
-      title: 'Diesel GO Case Study Complete',
+      title: 'Diesel Flow Case Study Complete',
       description: 'Full documentation and business analysis for the fuel depot management system.',
       timestamp: new Date('2026-03-08'),
       author: 'IANCREDIBLE',

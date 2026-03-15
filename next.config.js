@@ -27,6 +27,7 @@ const nextConfig = {
   swcMinify: true,
   compress: true,
   poweredByHeader: false,
+  output: 'export',
 
   // Security headers
   async headers() {

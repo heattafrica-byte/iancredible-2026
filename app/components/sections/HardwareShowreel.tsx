@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { MediaLoader } from '@/app/components/MediaLoader'
 
 const HardwareShowreel = () => {
   const [selectedCategory, setSelectedCategory] = useState('video')
@@ -168,8 +169,9 @@ const HardwareShowreel = () => {
                 transition={{ delay: 0.2 }}
               >
                 <div className="relative overflow-hidden rounded-lg h-64 group">
-                  <img
-                    src="/images/heat-gear-landscape-1.png"
+                  <MediaLoader
+                    folder="images"
+                    fallbackUrl="/images/heat-gear-landscape-1.png"
                     alt="Professional video production gear"
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   />
@@ -178,8 +180,9 @@ const HardwareShowreel = () => {
                   </div>
                 </div>
                 <div className="relative overflow-hidden rounded-lg h-64 group">
-                  <img
-                    src="/images/heat-gear-landscape-2.png"
+                  <MediaLoader
+                    folder="images"
+                    fallbackUrl="/images/heat-gear-landscape-2.png"
                     alt="Motocross and action sports cinematography"
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   />

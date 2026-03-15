@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { MediaLoader } from '@/app/components/MediaLoader'
 
 type EraType = 'morrison' | 'credible' | 'iamian'
 
@@ -86,11 +87,11 @@ const EraCard = ({
         initial={{ opacity: 0, maxHeight: 0 }}
         animate={
           isActive
-            ? { opacity: 1, maxHeight: 200 }
+            ? { opacity: 1, maxHeight: 500 }
             : { opacity: 0, maxHeight: 0 }
         }
         transition={{ duration: 0.3 }}
-        className="text-sm text-gray-300 leading-relaxed overflow-hidden"
+        className="text-sm text-gray-300 leading-relaxed overflow-auto max-h-48"
       >
         {description}
       </motion.p>
@@ -154,24 +155,17 @@ export default function EvolutionHero() {
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 3, repeat: Infinity }}
           >
-            <img
-              src="/images/iamian-logo.png"
+            <MediaLoader
+              folder="images/dddd"
+              fallbackUrl="/images/iamian-logo.png"
               alt="IAMIAN Logo"
               className="h-16 md:h-20 drop-shadow-lg"
-              style={{
-                filter: 'drop-shadow(0 0 20px rgba(0, 217, 255, 0.6))',
-              }}
             />
           </motion.div>
 
           <h1 className="text-5xl md:text-7xl font-black mb-6 neon-glow-enhanced">
             THIS IS MY STORY
           </h1>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            I am Ian Morrison. I have evolved through many identities—Ian Credible, now IAMIAN—shaped by 40
-            years of personal experience, professional growth, and the generosity of a fiery creative community
-            that believed in passing on priceless knowledge without expectation of remuneration.
-          </p>
         </motion.div>
 
         {/* Era Selection */}
@@ -195,6 +189,20 @@ export default function EvolutionHero() {
               delay={i * 0.1 + 0.3}
             />
           ))}
+        </motion.div>
+
+        {/* Description Section */}
+        <motion.div
+          className="text-center max-w-4xl mx-auto mb-16"
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <p className="text-lg md:text-xl text-gray-300 leading-relaxed">
+            I am Ian Morrison. I have evolved through many identities—Ian Credible, now IAMIAN—shaped by 40
+            years of personal experience, professional growth, and the generosity of a fiery creative community
+            that believed in passing on priceless knowledge without expectation of remuneration.
+          </p>
         </motion.div>
 
         {/* Core Value Statement */}

@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'IANCREDIBLE | Creative Technologist',
-  description: 'Interactive portfolio: Diesel GO (Business), IAMIAN (Audio), Hardware Expertise',
+  description: 'Interactive portfolio: Diesel Flow (Business), IAMIAN (Audio), Hardware Expertise',
   openGraph: {
     title: 'IANCREDIBLE | Creative Technologist',
     description: 'Full-stack execution across code, sound, and hardware',
