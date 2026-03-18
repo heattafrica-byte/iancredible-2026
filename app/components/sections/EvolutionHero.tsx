@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { MediaLoader } from '@/app/components/MediaLoader'
 
 type EraType = 'morrison' | 'credible' | 'iamian'
 
@@ -149,20 +148,6 @@ export default function EvolutionHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          {/* IAMIAN Logo */}
-          <motion.div
-            className="mb-8 flex justify-center"
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 3, repeat: Infinity }}
-          >
-            <MediaLoader
-              folder="images/dddd"
-              fallbackUrl="/images/iamian-logo.png"
-              alt="IAMIAN Logo"
-              className="h-16 md:h-20 drop-shadow-lg"
-            />
-          </motion.div>
-
           <h1 className="text-5xl md:text-7xl font-black mb-6 neon-glow-enhanced">
             THIS IS MY STORY
           </h1>

@@ -26,15 +26,24 @@ export default function Navigation({ currentPath, onNavigate }: NavigationProps)
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
         {/* Logo/Brand */}
         <motion.button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="text-xl font-bold neon-glow cursor-pointer hover:text-neon-cyan transition-colors"
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          ◈ IAMIAN
+          {/* IAMIAN Logo Image */}
+          <div className="h-10 w-auto">
+            <img
+              src="/images/IAMIAN%20Logo.png"
+              alt="IAMIAN Logo"
+              className="h-10 object-contain"
+            />
+          </div>
+          {/* Fallback text if image not loaded */}
+          <span className="font-bold neon-glow text-lg hidden sm:inline">IAMIAN</span>
         </motion.button>
 
         {/* Navigation Items */}

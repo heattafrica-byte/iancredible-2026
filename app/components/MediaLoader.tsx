@@ -28,35 +28,32 @@ export function MediaLoader({
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Always try to load from Firebase Storage first, even if fallback exists
+    // If fallback provided, use it and skip Firebase entirely
+    if (fallbackUrl) {
+      setMediaUrl(fallbackUrl)
+      setIsLoading(false)
+      setError(null)
+      return // Skip Firebase calls
+    }
+
+    // No fallback, must load from Firebase
     const loadMedia = async () => {
       try {
         const urls = await getCachedMedia(folder)
         if (urls.length > 0) {
-          setMediaUrl(urls[0]) // Use first file in the folder
+          setMediaUrl(urls[0])
           setError(null)
-        } else if (!fallbackUrl) {
+        } else {
           setError(`No media found in ${folder}`)
         }
       } catch (err: any) {
-        // If Firebase fails and no fallback, show error
-        if (!fallbackUrl) {
-          setError(`Firebase error: ${err.message}`)
-        }
+        setError(`Failed to load from ${folder}`)
       } finally {
         setIsLoading(false)
       }
     }
 
-    if (fallbackUrl) {
-      // If fallback provided, use it immediately and try Firebase in background
-      setMediaUrl(fallbackUrl)
-      setIsLoading(false)
-      loadMedia().catch(() => {}) // Try to update from Firebase silently
-    } else {
-      // No fallback, must load from Firebase
-      loadMedia()
-    }
+    loadMedia()
   }, [folder, fallbackUrl])
 
   if (!mediaUrl) {
@@ -95,7 +92,7 @@ export function MediaLoader({
  */
 export function useMediaFolder(folder: string) {
   const [urls, setUrls] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -104,7 +101,8 @@ export function useMediaFolder(folder: string) {
         const mediaUrls = await getCachedMedia(folder)
         setUrls(mediaUrls)
       } catch (err: any) {
-        setError(err.message)
+        // Silently fail - Firebase Storage might not be configured
+        setUrls([])
       } finally {
         setIsLoading(false)
       }
@@ -125,8 +123,11 @@ export function useMedia(path: string, fallback?: string) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    // If fallback provided, use it and skip Firebase entirely
     if (fallback) {
+      setUrl(fallback)
       setIsLoading(false)
+      setError(null)
       return
     }
 
@@ -136,7 +137,8 @@ export function useMedia(path: string, fallback?: string) {
         const fileUrl = await getFileURL(path)
         setUrl(fileUrl)
       } catch (err: any) {
-        setError(err.message)
+        // Silently fail - Firebase Storage might not be configured
+        setError(null)
       } finally {
         setIsLoading(false)
       }

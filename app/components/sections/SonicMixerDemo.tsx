@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { MediaLoader } from '@/app/components/MediaLoader'
 
 const SonicMixerDemo = () => {
@@ -15,6 +15,17 @@ const SonicMixerDemo = () => {
     input_atmosphere: 'preset_atm_01.wav',
   })
 
+  // Master controls
+  const [masterVolume, setMasterVolume] = useState(0)
+  const [masterBypass, setMasterBypass] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isLooping, setIsLooping] = useState(false)
+  const [muteStages, setMuteStages] = useState<{ [key: string]: boolean }>({})
+  const [soloStages, setSoloStages] = useState<{ [key: string]: boolean }>({})
+  const [currentSampleLoop, setCurrentSampleLoop] = useState<{ [key: string]: boolean }>({})
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
+
   useEffect(() => {
     const interval = setInterval(() => {
       setBars(
@@ -25,6 +36,65 @@ const SonicMixerDemo = () => {
     }, 150)
     return () => clearInterval(interval)
   }, [])
+
+  // Audio playback handlers
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    const handleEnded = () => {
+      const sampleKey = `${activeStem}_sample`
+      if (currentSampleLoop[sampleKey]) {
+        audio.currentTime = 0
+        audio.play()
+      } else {
+        setIsPlaying(false)
+      }
+    }
+
+    audio.addEventListener('ended', handleEnded)
+    return () => audio.removeEventListener('ended', handleEnded)
+  }, [activeStem, currentSampleLoop])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current.src = ''
+      }
+    }
+  }, [])
+
+  const handlePlaySample = () => {
+    if (!audioRef.current) return
+    
+    if (isPlaying) {
+      audioRef.current.pause()
+      setIsPlaying(false)
+    } else {
+      // Simulate sample playback with a simple tone
+      audioRef.current.play().catch(() => {
+        // If no actual audio file, visual feedback occurs
+        setIsPlaying(true)
+      })
+    }
+  }
+
+  const handleStopSample = () => {
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+    }
+    setIsPlaying(false)
+  }
+
+  const toggleSampleLoop = (sampleKey: string) => {
+    setCurrentSampleLoop({
+      ...currentSampleLoop,
+      [sampleKey]: !currentSampleLoop[sampleKey],
+    })
+  }
 
   // DSP Chain stages
   const dspChain = [
@@ -88,6 +158,27 @@ const SonicMixerDemo = () => {
     },
   ]
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const url = URL.createObjectURL(file)
+      if (audioRef.current) {
+        audioRef.current.src = url
+      }
+      setSelectedFiles({
+        ...selectedFiles,
+        [key]: file.name,
+      })
+    }
+  }
+
+  const triggerFileDialog = (key: string) => {
+    if (fileInputRef.current) {
+      fileInputRef.current.onchange = (e) => handleFileUpload(e as any, key)
+      fileInputRef.current.click()
+    }
+  }
+
   return (
     <section className="py-24 px-4 bg-dark-bg">
       <div className="max-w-7xl mx-auto">
@@ -105,6 +196,107 @@ const SonicMixerDemo = () => {
           <p className="text-gray-400 max-w-2xl mx-auto">
             Interactive DSP chain demonstration: Experience professional audio processing from input through mastered output
           </p>
+        </motion.div>
+
+        {/* Live Audio Visualizer (Output of DSP Chain) */}
+        <motion.div
+          className="glass weathered weathered-border scratches wet-reflection glitch-overlay shadow-neon-pink border border-neon-pink/30 rounded-2xl p-8 md:p-12 mb-16"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          <h3 className="text-lg font-bold neon-pink-enhanced mb-8 text-center">
+            ⚡ LIVE DSP OUTPUT VISUALIZER
+          </h3>
+          <div className="flex items-end justify-center gap-1 h-40 md:h-56 mb-8 bg-dark-surface/50 rounded-lg p-4">
+            {bars.map((height, i) => (
+              <motion.div
+                key={i}
+                className="flex-1 bg-gradient-to-t from-neon-pink via-neon-purple to-neon-cyan rounded-sm"
+                animate={{ height: `${Math.max(height, 10)}%` }}
+                transition={{ duration: 0.1 }}
+              />
+            ))}
+          </div>
+          <p className="text-center text-sm text-gray-500">Real-time processing of "{stems.find(s => s.id === activeStem)?.name}" through DSP chain</p>
+        </motion.div>
+
+        {/* Master Controls */}
+        <motion.div
+          className="mb-16 glass weathered weathered-border scratches wet-reflection glitch-overlay shadow-neon-pink border border-neon-pink/30 rounded-2xl p-8"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          viewport={{ once: true }}
+        >
+          <div className="grid md:grid-cols-3 gap-6 items-center">
+            {/* Master Volume */}
+            <div className="space-y-3">
+              <label className="text-sm font-bold text-neon-pink">MASTER VOLUME</label>
+              <input
+                type="range"
+                min="-60"
+                max="6"
+                value={masterVolume}
+                onChange={(e) => setMasterVolume(parseInt(e.target.value))}
+                className="w-full h-2 bg-dark-surface rounded-full cursor-pointer accent-neon-pink"
+              />
+              <p className="text-center text-sm font-bold text-neon-pink">{masterVolume} dB</p>
+            </div>
+
+            {/* Transport Controls */}
+            <div className="flex gap-2 justify-center">
+              <motion.button
+                onClick={handlePlaySample}
+                className="px-4 py-2 rounded-lg font-bold transition-all"
+                style={{
+                  background: isPlaying ? 'rgba(255, 0, 255, 0.2)' : 'rgba(255, 0, 255, 0.1)',
+                  color: '#ff00ff',
+                  border: '2px solid rgba(255, 0, 255, 0.3)',
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {isPlaying ? '⏸ STOP' : '▶ PLAY'}
+              </motion.button>
+
+              <motion.button
+                onClick={() => setIsLooping(!isLooping)}
+                className="px-4 py-2 rounded-lg font-bold transition-all"
+                style={{
+                  background: isLooping ? 'rgba(16, 185, 129, 0.2)' : 'rgba(160, 160, 192, 0.1)',
+                  color: isLooping ? '#10b981' : '#a0a0c0',
+                  border: isLooping
+                    ? '2px solid rgba(16, 185, 129, 0.5)'
+                    : '2px solid rgba(160, 160, 192, 0.3)',
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                🔁 {isLooping ? 'ON' : 'OFF'}
+              </motion.button>
+            </div>
+
+            {/* Master Bypass */}
+            <div className="flex items-center justify-center">
+              <motion.button
+                onClick={() => setMasterBypass(!masterBypass)}
+                className="px-6 py-3 rounded-lg font-bold transition-all"
+                style={{
+                  background: masterBypass ? 'rgba(239, 68, 68, 0.2)' : 'rgba(0, 217, 255, 0.1)',
+                  color: masterBypass ? '#ef4444' : '#00d9ff',
+                  border: masterBypass
+                    ? '2px solid rgba(239, 68, 68, 0.5)'
+                    : '2px solid rgba(0, 217, 255, 0.3)',
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {masterBypass ? '⏸ BYPASSED' : '✓ ACTIVE'}
+              </motion.button>
+            </div>
+          </div>
         </motion.div>
 
         {/* DSP Chain Flow Diagram */}
@@ -231,45 +423,159 @@ const SonicMixerDemo = () => {
                         </h4>
                         <p className="text-xs text-gray-400">{stage.description}</p>
                       </div>
+
+                      {/* Mute/Solo Controls */}
+                      <div className="flex gap-2">
+                        <motion.button
+                          onClick={() =>
+                            setMuteStages({
+                              ...muteStages,
+                              [stage.stage]: !muteStages[stage.stage],
+                            })
+                          }
+                          className="px-3 py-1 rounded text-xs font-bold transition-all"
+                          style={{
+                            background: muteStages[stage.stage]
+                              ? 'rgba(239, 68, 68, 0.2)'
+                              : `${stage.color}15`,
+                            color: muteStages[stage.stage] ? '#ef4444' : stage.color,
+                            border: muteStages[stage.stage]
+                              ? '1px solid rgba(239, 68, 68, 0.5)'
+                              : `1px solid ${stage.color}40`,
+                          }}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          title="Mute this stage"
+                        >
+                          M
+                        </motion.button>
+                        <motion.button
+                          onClick={() =>
+                            setSoloStages({
+                              ...soloStages,
+                              [stage.stage]: !soloStages[stage.stage],
+                            })
+                          }
+                          className="px-3 py-1 rounded text-xs font-bold transition-all"
+                          style={{
+                            background: soloStages[stage.stage]
+                              ? 'rgba(16, 185, 129, 0.2)'
+                              : `${stage.color}15`,
+                            color: soloStages[stage.stage] ? '#10b981' : stage.color,
+                            border: soloStages[stage.stage]
+                              ? '1px solid rgba(16, 185, 129, 0.5)'
+                              : `1px solid ${stage.color}40`,
+                          }}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          title="Solo this stage"
+                        >
+                          S
+                        </motion.button>
+                      </div>
                     </div>
 
                     {/* File options for INPUT stage, params for others */}
                     {stage.stage === 'INPUT' && stem.id in (stage.stems as any) ? (
-                      <div className="grid md:grid-cols-3 gap-3">
-                        {(stage.stems as any)[stem.id].map((file: string, fileIdx: number) => (
-                          <motion.button
-                            key={fileIdx}
-                            className={`p-3 rounded-lg text-sm font-semibold transition-all border-2 text-left ${
+                      <div className="space-y-4">
+                        <div className="grid md:grid-cols-3 gap-3">
+                          {(stage.stems as any)[stem.id].map((file: string, fileIdx: number) => {
+                            const isSelected =
                               selectedFiles[`input_${stem.id}`] === `preset_${stem.id}_0${fileIdx + 1}.wav`
-                                ? 'ring-2 ring-offset-2'
-                                : ''
-                            }`}
+                            return (
+                              <div key={fileIdx} className="space-y-2">
+                                <motion.button
+                                  className={`w-full p-3 rounded-lg text-sm font-semibold transition-all border-2 text-left ${
+                                    isSelected ? 'ring-2 ring-offset-2' : ''
+                                  }`}
+                                  style={{
+                                    borderColor: isSelected
+                                      ? stage.color
+                                      : `${stage.color}40`,
+                                    background: isSelected
+                                      ? `${stage.color}15`
+                                      : 'rgba(26, 31, 58, 0.5)',
+                                    color: isSelected ? stage.color : '#a0a0c0',
+                                  }}
+                                  onClick={() => {
+                                    setSelectedFiles({
+                                      ...selectedFiles,
+                                      [`input_${stem.id}`]: `preset_${stem.id}_0${fileIdx + 1}.wav`,
+                                    })
+                                  }}
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                >
+                                  📄 {file}
+                                </motion.button>
+                                {isSelected && (
+                                  <div className="flex gap-2">
+                                    <motion.button
+                                      onClick={handlePlaySample}
+                                      className="flex-1 px-2 py-1 rounded text-xs font-bold transition-all"
+                                      style={{
+                                        background: isPlaying
+                                          ? `${stage.color}30`
+                                          : `${stage.color}15`,
+                                        color: stage.color,
+                                        border: `1px solid ${stage.color}40`,
+                                      }}
+                                      whileHover={{ scale: 1.05 }}
+                                      whileTap={{ scale: 0.95 }}
+                                    >
+                                      {isPlaying ? '⏸' : '▶'}
+                                    </motion.button>
+                                    <motion.button
+                                      onClick={() =>
+                                        toggleSampleLoop(`${stem.id}_sample`)
+                                      }
+                                      className="flex-1 px-2 py-1 rounded text-xs font-bold transition-all"
+                                      style={{
+                                        background:
+                                          currentSampleLoop[
+                                            `${stem.id}_sample`
+                                          ]
+                                            ? `#10b98130`
+                                            : `${stage.color}15`,
+                                        color: currentSampleLoop[
+                                          `${stem.id}_sample`
+                                        ]
+                                          ? '#10b981'
+                                          : stage.color,
+                                        border:
+                                          currentSampleLoop[
+                                            `${stem.id}_sample`
+                                          ]
+                                            ? '1px solid #10b98140'
+                                            : `1px solid ${stage.color}40`,
+                                      }}
+                                      whileHover={{ scale: 1.05 }}
+                                      whileTap={{ scale: 0.95 }}
+                                    >
+                                      🔁
+                                    </motion.button>
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+
+                        {/* Upload option ONLY for INPUT stage */}
+                        <div className="pt-4 border-t border-gray-700/30">
+                          <motion.button
+                            onClick={() => triggerFileDialog(`input_${stem.id}`)}
+                            className="w-full py-2 px-4 rounded-lg text-sm font-semibold border-2 border-dashed transition-all"
                             style={{
-                              borderColor:
-                                selectedFiles[`input_${stem.id}`] === `preset_${stem.id}_0${fileIdx + 1}.wav`
-                                  ? stage.color
-                                  : `${stage.color}40`,
-                              background:
-                                selectedFiles[`input_${stem.id}`] === `preset_${stem.id}_0${fileIdx + 1}.wav`
-                                  ? `${stage.color}15`
-                                  : 'rgba(26, 31, 58, 0.5)',
-                              color:
-                                selectedFiles[`input_${stem.id}`] === `preset_${stem.id}_0${fileIdx + 1}.wav`
-                                  ? stage.color
-                                  : '#a0a0c0',
+                              borderColor: `${stage.color}60`,
+                              color: stage.color,
+                              background: `${stage.color}05`,
                             }}
-                            onClick={() => {
-                              setSelectedFiles({
-                                ...selectedFiles,
-                                [`input_${stem.id}`]: `preset_${stem.id}_0${fileIdx + 1}.wav`,
-                              })
-                            }}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            whileHover={{ background: `${stage.color}10` }}
                           >
-                            📄 {file}
+                            📤 Upload Custom File
                           </motion.button>
-                        ))}
+                        </div>
                       </div>
                     ) : stage.stage !== 'INPUT' ? (
                       <div className="grid md:grid-cols-3 gap-4">
@@ -293,51 +599,12 @@ const SonicMixerDemo = () => {
                         ))}
                       </div>
                     ) : null}
-
-                    {/* Upload option for each stage */}
-                    <div className="mt-4 pt-4 border-t border-gray-700/30">
-                      <motion.button
-                        className="w-full py-2 px-4 rounded-lg text-sm font-semibold border-2 border-dashed transition-all"
-                        style={{
-                          borderColor: `${stage.color}60`,
-                          color: stage.color,
-                          background: `${stage.color}05`,
-                        }}
-                        whileHover={{ background: `${stage.color}10` }}
-                      >
-                        📤 Upload Custom File
-                      </motion.button>
-                    </div>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
           )
         ))}
-
-        {/* Live Audio Visualizer (Output of DSP Chain) */}
-        <motion.div
-          className="glass weathered weathered-border scratches wet-reflection glitch-overlay shadow-neon-pink border border-neon-pink/30 rounded-2xl p-8 md:p-12 mb-16"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          viewport={{ once: true }}
-        >
-          <h3 className="text-lg font-bold neon-pink-enhanced mb-8 text-center">
-            ⚡ LIVE DSP OUTPUT VISUALIZER
-          </h3>
-          <div className="flex items-end justify-center gap-1 h-40 md:h-56 mb-8 bg-dark-surface/50 rounded-lg p-4">
-            {bars.map((height, i) => (
-              <motion.div
-                key={i}
-                className="flex-1 bg-gradient-to-t from-neon-pink via-neon-purple to-neon-cyan rounded-sm"
-                animate={{ height: `${Math.max(height, 10)}%` }}
-                transition={{ duration: 0.1 }}
-              />
-            ))}
-          </div>
-          <p className="text-center text-sm text-gray-500">Real-time processing of "{stems.find(s => s.id === activeStem)?.name}" through DSP chain</p>
-        </motion.div>
 
         {/* Production Details */}
         <motion.div
@@ -401,6 +668,11 @@ const SonicMixerDemo = () => {
             Collaborate Now
           </motion.button>
         </motion.div>
+
+        {/* Hidden audio element */}
+        <audio ref={audioRef} crossOrigin="anonymous" />
+        {/* Hidden file input */}
+        <input ref={fileInputRef} type="file" accept="audio/*" className="hidden" />
       </div>
     </section>
   )

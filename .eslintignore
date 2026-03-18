@@ -1,0 +1,7 @@
+node_modules/
+.next/
+out/
+public/cosmic-flow/
+app/cosmic-flow/dist/
+app/cosmic-flow/node_modules/
+app/Intellimix files for demo/
