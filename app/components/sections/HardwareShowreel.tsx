@@ -171,7 +171,7 @@ const HardwareShowreel = () => {
                 <div className="relative overflow-hidden rounded-lg h-64 group">
                   <MediaLoader
                     folder="images"
-                    fallbackUrl="/images/heat-gear-landscape-1.png"
+                    fallbackUrl="/images/ian-morrison-portrait.jpg"
                     alt="Professional video production gear"
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   />
@@ -182,7 +182,7 @@ const HardwareShowreel = () => {
                 <div className="relative overflow-hidden rounded-lg h-64 group">
                   <MediaLoader
                     folder="images"
-                    fallbackUrl="/images/heat-gear-landscape-2.png"
+                    fallbackUrl="/images/street-art-portrait.jpeg"
                     alt="Motocross and action sports cinematography"
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   />
