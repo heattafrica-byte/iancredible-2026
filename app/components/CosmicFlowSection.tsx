@@ -1,20 +1,32 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const CosmicFlowSection = () => {
   const [showCosmic, setShowCosmic] = useState(false)
 
+  // Handle ESC key to close
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showCosmic) {
+        setShowCosmic(false)
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [showCosmic])
+
   // Get the server URL - will be set via environment variable
   const getCosmicFlowUrl = () => {
     if (typeof window !== 'undefined') {
-      // In development (localhost), connect to local server
+      // In development (localhost), always use local server
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         return 'http://localhost:3000'
       }
-      // In production, will be updated with actual Cloud Run URL
-      return process.env.NEXT_PUBLIC_COSMIC_FLOW_URL || 'https://cosmic-flow-server-REPLACE-ME.run.app'
+      // In production, use environment variable or default to localhost
+      return process.env.NEXT_PUBLIC_COSMIC_FLOW_URL || 'http://localhost:3000'
     }
     return 'http://localhost:3000'
   }
@@ -27,12 +39,12 @@ const CosmicFlowSection = () => {
         {/* Close button */}
         <motion.button
           onClick={() => setShowCosmic(false)}
-          className="fixed top-6 right-6 z-50 text-white hover:text-neon-cyan transition-colors"
+          className="fixed top-6 right-6 z-[999] p-3 rounded-full bg-red-600 hover:bg-red-700 text-white transition-colors cursor-pointer"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
+          title="Close (ESC)"
         >
-          <div className="text-3xl font-bold">✕</div>
-          <div className="text-xs font-mono text-gray-500 mt-1">ESC</div>
+          <div className="text-2xl font-bold leading-none">✕</div>
         </motion.button>
 
         {/* Cosmic Flow Iframe */}

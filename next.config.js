@@ -27,7 +27,8 @@ const nextConfig = {
   swcMinify: true,
   compress: true,
   poweredByHeader: false,
-  output: 'export',
+  // Static export for production only
+  ...(process.env.NODE_ENV === 'production' && { output: 'export' }),
 
   // Security headers
   async headers() {
@@ -41,23 +42,11 @@ const nextConfig = {
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY',
+            value: 'SAMEORIGIN',
           },
           {
             key: 'X-XSS-Protection',
             value: '1; mode=block',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: "default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';",
           },
         ],
       },
