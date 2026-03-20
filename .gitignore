@@ -17,3 +17,8 @@ dist/
 coverage/
 .turbo/
 .vercel
+.firebase/
+.firebaserc
+firebase-debug.log
+*service-account*.json
+*credentials*.json
