@@ -5,13 +5,21 @@ import { getFirestore, Firestore } from 'firebase/firestore'
 import { getStorage, FirebaseStorage } from 'firebase/storage'
 
 // Your web app's Firebase configuration
+// All values MUST be provided via environment variables
+if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+  throw new Error('Missing required environment variable: NEXT_PUBLIC_FIREBASE_API_KEY')
+}
+if (!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+  throw new Error('Missing required environment variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID')
+}
+
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyCqoKll_rAcRWJrO0SJ5pH7LK3-Ay_Juc8",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "iancredible-website.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "iancredible-website",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "iancredible-website.firebasestorage.app",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "796662323239",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:796662323239:web:4e7c185a08c0918f941602"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 }
 
 // Initialize Firebase

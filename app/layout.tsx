@@ -1,19 +1,17 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import RootLayoutClient from './layout-client'
 
 export const metadata: Metadata = {
   title: 'IANCREDIBLE | Creative Technologist',
-  description: 'Interactive portfolio: Diesel Flow (Business), IAMIAN (Audio), Hardware Expertise',
+  description: 'Interactive multimedia portfolio showcasing 40 years of innovation across software, audio production, and hardware engineering.',
+  keywords: ['Creative Technologist', 'Portfolio', 'Audio Production', 'Hardware Engineering', 'Software Development'],
+  authors: [{ name: 'Ian Morrison' }],
+  creator: 'IANCREDIBLE',
   openGraph: {
     title: 'IANCREDIBLE | Creative Technologist',
-    description: 'Full-stack execution across code, sound, and hardware',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-      },
-    ],
+    description: 'Interactive multimedia portfolio showcasing 40 years of innovation',
+    type: 'website',
   },
 }
 
@@ -25,8 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-dark-bg">
-        <div className="matrix-bg" />
-        {children}
+        <RootLayoutClient>
+          {children}
+        </RootLayoutClient>
       </body>
     </html>
   )

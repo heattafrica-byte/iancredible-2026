@@ -1,0 +1,111 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // TEMPORARY RULES - For development and testing
+    // All collections are readable by authenticated users
+    // Public read for public collections (tracks, announcements, settings)
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return request.auth != null && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isOwner(ownerId) {
+      return request.auth.uid == ownerId;
+    }
+
+    // Users - readable by all, writable by owner or admin
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && (isOwner(userId) || isAdmin());
+    }
+
+    // Tracks - readable by all, writable by uploading admin
+    match /tracks/{trackId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update, delete: if isAdmin();
+      
+      // Track ratings - writable by authenticated users
+      match /ratings/{ratingId} {
+        allow read: if true;
+        allow write: if isAuthenticated();
+      }
+
+      // Track comments
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isAuthenticated();
+        allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      }
+    }
+
+    // Submissions - readable/writable by owner or admin
+    match /submissions/{submissionId} {
+      allow read: if isAuthenticated() && (isOwner(resource.data.userId) || isAdmin());
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin() || isOwner(resource.data.userId);
+    }
+
+    // Payments - readable by owner or admin
+    match /payments/{paymentId} {
+      allow read: if isAdmin() || isOwner(resource.data.userId);
+      allow write: if isAdmin();
+    }
+
+    // Announcements - readable by all, writable by admin
+    match /announcements/{announcementId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Settings - readable by all, writable by admin
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Analytics - readable by all, writable by authenticated
+    match /analytics/{docId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Playlists - readable by all, writable by owner or admin
+    match /playlists/{playlistId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin() || isOwner(resource.data.createdBy);
+    }
+
+    // Artists - readable by all, writable by admin
+    match /artists/{artistId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Labels - readable by all, writable by admin
+    match /labels/{labelId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Storage uploads - writable by admin
+    match /uploads/{uploadId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Catch-all for development - allow all authenticated access
+    match /{document=**} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+  }
+}

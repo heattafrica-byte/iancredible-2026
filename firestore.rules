@@ -1,0 +1,145 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin(uid) {
+      return request.auth.uid == uid && 
+             exists(/databases/$(database)/documents/users/$(uid)) &&
+             get(/databases/$(database)/documents/users/$(uid)).data.role == 'admin';
+    }
+    
+    function isUserOrAdmin(uid) {
+      return request.auth.uid == uid || isAdmin(request.auth.uid);
+    }
+    
+    // Users collection - readable by all authenticated users, writable by owner
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if request.auth.uid == userId;
+      allow update: if isUserOrAdmin(userId);
+      allow delete: if isAdmin(userId);
+    }
+    
+    // Tracks collection - readable by all, writable by admins
+    match /tracks/{trackId} {
+      allow read: if true; // Public read
+      allow create: if isAuthenticated() && isAdmin(request.auth.uid);
+      allow update: if isAuthenticated() && isAdmin(request.auth.uid);
+      allow delete: if isAdmin(request.auth.uid);
+      
+      // Track ratings - writable by authenticated users
+      match /ratings/{ratingId} {
+        allow read: if true;
+        allow write: if isAuthenticated();
+      }
+
+      // Track comments
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if isAuthenticated();
+        allow update, delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      }
+    }
+    
+    // Submissions collection - readable by submitter and admins
+    match /submissions/{submissionId} {
+      allow read: if isAuthenticated() && 
+                     (isAdmin(request.auth.uid) || 
+                      request.auth.uid == resource.data.artistId);
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.artistId;
+      allow update: if isAdmin(request.auth.uid) || request.auth.uid == resource.data.artistId;
+      allow delete: if isAdmin(request.auth.uid);
+    }
+    
+    // Payments collection - readable by owner and admins
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated() && 
+                     (isAdmin(request.auth.uid) || 
+                      request.auth.uid == resource.data.userId);
+      allow write: if isAdmin(request.auth.uid);
+    }
+
+    // Announcements - readable by all, writable by admin
+    match /announcements/{announcementId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isAdmin(request.auth.uid);
+    }
+
+    // Settings - readable by all, writable by admin
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isAdmin(request.auth.uid);
+    }
+
+    // Analytics - readable by all, writable by authenticated
+    match /analytics/{docId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Playlists - readable by all, writable by owner or admin
+    match /playlists/{playlistId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && (isAdmin(request.auth.uid) || request.auth.uid == resource.data.createdBy);
+    }
+
+    // Artists - readable by all, writable by admin
+    match /artists/{artistId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isAdmin(request.auth.uid);
+    }
+
+    // Labels - readable by all, writable by admin
+    match /labels/{labelId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isAdmin(request.auth.uid);
+    }
+
+    // Storage uploads - writable by admin
+    match /uploads/{uploadId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isAdmin(request.auth.uid);
+    }
+  }
+}
+                     (isAdmin(request.auth.uid) || 
+                      request.auth.uid == resource.data.userId);
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      allow update: if isAdmin(request.auth.uid);
+      allow delete: if false;
+    }
+    
+    // Announcements collection - readable by all, writable by admins
+    match /announcements/{announcementId} {
+      allow read: if true; // Public read
+      allow write: if isAdmin(request.auth.uid);
+      allow delete: if isAdmin(request.auth.uid);
+    }
+    
+    // Settings collection - readable by all, writable by admins
+    match /settings/{docId} {
+      allow read: if true; // Public read
+      allow write: if isAdmin(request.auth.uid);
+      allow delete: if false;
+    }
+    
+    // Analytics collection
+    match /analytics/{docId} {
+      allow read: if isAuthenticated() && 
+                     (isAdmin(request.auth.uid) || 
+                      request.auth.uid == resource.data.userId);
+      allow write: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+    }
+    
+    // Default deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

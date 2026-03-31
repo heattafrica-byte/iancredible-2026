@@ -2,9 +2,9 @@
 
 import { motion } from 'framer-motion'
 
-const IntellimixShowcase = () => {
+const IntellimixShowcase = ({ id }: { id?: string }) => {
   return (
-    <section className="py-24 px-4 bg-dark-bg">
+    <section id={id} className="py-24 px-4 bg-dark-bg">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div

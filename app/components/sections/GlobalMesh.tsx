@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { MediaLoader } from '@/app/components/MediaLoader'
 
-const GlobalMesh = () => {
+const GlobalMesh = ({ id }: { id?: string }) => {
   const platforms = [
     {
       name: 'Linktree',

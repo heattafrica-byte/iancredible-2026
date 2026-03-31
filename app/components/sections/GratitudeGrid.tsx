@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { MediaLoader } from '@/app/components/MediaLoader'
 
-const GratitudeGrid = () => {
+const GratitudeGrid = ({ id }: { id?: string }) => {
   const mentorCategories = [
     {
       role: 'The Sonic Mentors',
@@ -40,7 +40,7 @@ const GratitudeGrid = () => {
   ]
 
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-dark-surface to-dark-bg">
+    <section id={id} className="py-24 px-4 bg-gradient-to-b from-dark-surface to-dark-bg">
       <div className="max-w-6xl mx-auto">
         {/* Section Header with Visual */}
         <motion.div

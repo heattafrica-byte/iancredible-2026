@@ -27,8 +27,8 @@ const nextConfig = {
   swcMinify: true,
   compress: true,
   poweredByHeader: false,
-  // Static export for production only
-  ...(process.env.NODE_ENV === 'production' && { output: 'export' }),
+  // No static export - use Cloud Run for server-side rendering
+  // output: 'export',
 
   // Security headers
   async headers() {

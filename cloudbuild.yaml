@@ -1,0 +1,29 @@
+steps:
+  # Build Docker image with build arguments and push to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg=NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyCqoKll_rAcRWJrO0SJ5pH7LK3-Ay_Juc8'
+      - '--build-arg=NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=iancredible-website.firebaseapp.com'
+      - '--build-arg=NEXT_PUBLIC_FIREBASE_PROJECT_ID=iancredible-website'
+      - '--build-arg=NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=iancredible-website.firebasestorage.app'
+      - '--build-arg=NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=796662323239'
+      - '--build-arg=NEXT_PUBLIC_FIREBASE_APP_ID=1:796662323239:web:4e7c185a08c0918f941602'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/iancredible-wappsite'
+      - '.'
+    
+  # Push image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/iancredible-wappsite'
+
+images:
+  - 'gcr.io/$PROJECT_ID/iancredible-wappsite'
+
+timeout: '1800s'
+
+
+
+

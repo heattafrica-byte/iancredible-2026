@@ -42,7 +42,7 @@ export default function CreatorProfile() {
                   {/* Portrait Image */}
                   <div className="relative w-full h-full bg-dark-surface">
                     <img
-                      src="/images/ian-morrison-portrait.jpg"
+                      src="/images/street-art-portrait.png"
                       alt="Ian Morrison - Creator"
                       className="w-full h-full object-cover object-center"
                     />

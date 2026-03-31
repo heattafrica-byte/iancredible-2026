@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { MediaLoader } from '@/app/components/MediaLoader'
 
-const HardwareShowreel = () => {
+const HardwareShowreel = ({ id }: { id?: string }) => {
   const [selectedCategory, setSelectedCategory] = useState('video')
 
   const categories = {
@@ -37,17 +37,17 @@ const HardwareShowreel = () => {
       icon: '⚙️',
       color: '#f59e0b',
       description:
-        'Precision work on complex systems: PS5 restoration, component-level repairs, thermal optimization',
+        'Precision work on complex systems: Component-level repairs, thermal optimization, and system diagnostics',
       showcases: [
         {
-          type: 'PS5 Restoration',
-          details: 'Full diagnostic, repair, and optimization',
+          type: 'Hardware Restoration',
+          details: 'Full system diagnostics and restoration',
           skills:
             'Thermal management, component replacement, firmware updates, QA testing',
         },
         {
-          type: 'Motherboard Diagnostics',
-          details: 'Complex circuit analysis and repair',
+          type: 'Digital Diagnostics',
+          details: 'Complex circuit analysis and technical troubleshooting',
           skills:
             'Schematic reading, soldering, component testing, signal integrity',
         },
@@ -88,7 +88,7 @@ const HardwareShowreel = () => {
   const current = categories[selectedCategory as keyof typeof categories]
 
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-dark-surface to-dark-bg">
+    <section id={id} className="py-24 px-4 bg-gradient-to-b from-dark-surface to-dark-bg">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -102,7 +102,7 @@ const HardwareShowreel = () => {
             <span style={{ textShadow: '0 0 30px rgba(120, 81, 255, 0.6)' }}>HARDWARE FIELD OPS</span>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Precision engineering meets creative vision: From PS5 restoration to cinematic drone operations
+            Precision engineering meets creative vision: From hardware restoration to cinematic drone operations
           </p>
         </motion.div>
 

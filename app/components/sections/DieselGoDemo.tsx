@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 
-const DieselFlowDemo = () => {
+const DieselFlowDemo = ({ id }: { id?: string }) => {
   const [activeTab, setActiveTab] = useState('overview')
 
   const tabs = [
@@ -93,7 +93,7 @@ const DieselFlowDemo = () => {
   }
 
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-dark-bg to-dark-surface">
+    <section id={id} className="py-24 px-4 bg-gradient-to-b from-dark-bg to-dark-surface">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div

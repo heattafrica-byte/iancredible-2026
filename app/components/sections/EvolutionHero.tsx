@@ -108,7 +108,7 @@ const EraCard = ({
   </motion.button>
 )
 
-export default function EvolutionHero() {
+export default function EvolutionHero({ id }: { id?: string }) {
   const [activeEra, setActiveEra] = useState<EraType>('morrison')
 
   const eras = {
@@ -139,7 +139,7 @@ export default function EvolutionHero() {
   }
 
   return (
-    <section className="min-h-screen pt-32 pb-16 px-4 flex flex-col items-center justify-center">
+    <section id={id} className="min-h-screen pt-32 pb-16 px-4 flex flex-col items-center justify-center">
       <div className="max-w-6xl mx-auto w-full">
         {/* Opening Statement with Logo */}
         <motion.div

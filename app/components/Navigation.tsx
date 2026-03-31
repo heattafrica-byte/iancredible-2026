@@ -49,23 +49,44 @@ export default function Navigation({ currentPath, onNavigate }: NavigationProps)
         {/* Navigation Items */}
         <div className="hidden md:flex gap-8 items-center">
           {[
-            { id: 'story', label: '📖 Story', icon: '' },
-            { id: 'diesel', label: '⚡ Tech', icon: '' },
-            { id: 'sonic', label: '🎵 Audio', icon: '' },
-            { id: 'hardware', label: '⚙️ Hardware', icon: '' },
-            { id: 'gratitude', label: '🤝 Community', icon: '' },
-            { id: 'global', label: '🌐 Connect', icon: '' },
+            { id: 'story', label: '📖 Story', icon: '', href: '/' },
+            { id: 'tech', label: '⚡ Tech', icon: '', href: '/tech' },
+            { id: 'audio', label: '🎵 Audio', icon: '', href: '/audio' },
+            { id: 'hardware', label: '⚙️ Hardware', icon: '', href: '/hardware' },
+            { id: 'record-label', label: '🎼 Record Label', icon: '', href: '/record-label' },
+            { id: 'decoded', label: '🔓 Decoded', icon: '', href: '/decoded' },
+            { id: 'community', label: '🤝 Community', icon: '', href: '/community' },
           ].map((item) => (
-            <motion.button
+            <motion.a
               key={item.id}
-              onClick={() => scrollToSection(item.id)}
+              href={item.href}
               className="text-sm font-semibold text-gray-400 hover:text-neon-cyan transition-colors"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               {item.label}
-            </motion.button>
+            </motion.a>
           ))}
+
+          {/* Auth Buttons */}
+          <div className="flex gap-4 ml-4 border-l border-neon-cyan/30 pl-4">
+            <motion.a
+              href="/auth/login"
+              className="text-sm font-semibold text-neon-cyan hover:text-neon-blue transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Login
+            </motion.a>
+            <motion.a
+              href="/auth/signup"
+              className="text-sm font-semibold px-4 py-2 rounded-lg bg-gradient-to-r from-neon-cyan to-neon-blue text-dark-bg hover:shadow-lg hover:shadow-neon-cyan/50 transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Sign Up
+            </motion.a>
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -106,6 +127,24 @@ export default function Navigation({ currentPath, onNavigate }: NavigationProps)
                 {item.label}
               </motion.button>
             ))}
+
+            {/* Mobile Auth Buttons */}
+            <div className="border-t border-neon-cyan/30 pt-4 mt-4 space-y-2">
+              <motion.a
+                href="/auth/login"
+                className="block w-full text-center text-sm font-semibold text-neon-cyan hover:text-neon-blue py-2 px-3 rounded transition-colors"
+                whileHover={{ backgroundColor: 'rgba(0, 217, 255, 0.1)' }}
+              >
+                Login
+              </motion.a>
+              <motion.a
+                href="/auth/signup"
+                className="block w-full text-center text-sm font-semibold px-4 py-2 rounded-lg bg-gradient-to-r from-neon-cyan to-neon-blue text-dark-bg hover:shadow-lg hover:shadow-neon-cyan/50 transition-all"
+                whileHover={{ scale: 1.05 }}
+              >
+                Sign Up
+              </motion.a>
+            </div>
           </div>
         </motion.div>
       )}
