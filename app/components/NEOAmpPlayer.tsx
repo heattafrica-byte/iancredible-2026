@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Volume2, Music } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Music, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface Track {
@@ -31,7 +31,11 @@ export default function NEOAmpPlayer({
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [intensity, setIntensity] = useState(0.7);
+  const [visualizerBars, setVisualizerBars] = useState(Array(32).fill(0));
   const audioRef = useRef<HTMLAudioElement>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   const currentTrack = tracks[currentIndex];
 
@@ -43,6 +47,45 @@ export default function NEOAmpPlayer({
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  // Initialize audio context for visualization
+  useEffect(() => {
+    if (!audioRef.current || analyserRef.current) return;
+
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+
+      const source = audioContext.createMediaElementAudioSource(audioRef.current);
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+
+      audioContextRef.current = audioContext;
+      analyserRef.current = analyser;
+    } catch (e) {
+      console.log('Audio context not supported');
+    }
+  }, []);
+
+  // Update visualizer
+  useEffect(() => {
+    if (!analyserRef.current || !isPlaying) return;
+
+    const animate = () => {
+      const dataArray = new Uint8Array(analyserRef.current!.frequencyBinCount);
+      analyserRef.current!.getByteFrequencyData(dataArray);
+
+      const scaledBars = Array.from(dataArray)
+        .slice(0, 32)
+        .map(v => (v / 255) * intensity);
+      
+      setVisualizerBars(scaledBars);
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+  }, [isPlaying, intensity]);
+
   // Handle play/pause
   const togglePlayPause = useCallback(() => {
     if (audioRef.current) {
@@ -50,7 +93,7 @@ export default function NEOAmpPlayer({
         audioRef.current.pause();
       } else {
         audioRef.current.play().catch(() => {
-          console.log('Play failed - audio may be loading');
+          console.log('Play failed');
         });
       }
       setIsPlaying(!isPlaying);
@@ -75,14 +118,6 @@ export default function NEOAmpPlayer({
     onTrackChange?.(prevIndex);
   }, [currentIndex, tracks.length, onTrackChange]);
 
-  // Handle track selection
-  const handleTrackClick = (index: number) => {
-    setCurrentIndex(index);
-    setCurrentTime(0);
-    setIsPlaying(true);
-    onTrackChange?.(index);
-  };
-
   // Update current time
   useEffect(() => {
     const audio = audioRef.current;
@@ -90,9 +125,7 @@ export default function NEOAmpPlayer({
 
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration);
-    const handleEnded = () => {
-      handleNext();
-    };
+    const handleEnded = () => handleNext();
     const handleLoadStart = () => setIsLoading(true);
     const handleCanPlay = () => setIsLoading(false);
 
@@ -148,20 +181,14 @@ export default function NEOAmpPlayer({
 
   if (variant === 'compact') {
     return (
-      <div className="w-full bg-gradient-to-r from-cyan-900 to-blue-900 rounded-lg p-4 text-white">
-        <audio
-          ref={audioRef}
-          src={currentTrack.url}
-          crossOrigin="anonymous"
-        />
+      <div className="w-full bg-gradient-to-r from-cyan-900 to-blue-900 rounded-lg p-4 text-white border border-cyan-500/30">
+        <audio ref={audioRef} src={currentTrack.url} crossOrigin="anonymous" />
 
-        {/* Track Info */}
         <div className="mb-4">
-          <h3 className="font-bold text-lg">{currentTrack.title}</h3>
+          <h3 className="font-bold text-lg text-cyan-300">{currentTrack.title}</h3>
           <p className="text-sm text-gray-300">{currentTrack.artist}</p>
         </div>
 
-        {/* Progress Bar */}
         <div className="mb-3 space-y-2">
           <input
             type="range"
@@ -169,19 +196,18 @@ export default function NEOAmpPlayer({
             max={duration || 0}
             value={currentTime}
             onChange={handleSeek}
-            className="w-full h-2 bg-gray-700 rounded cursor-pointer accent-cyan-400"
+            className="w-full h-1 bg-gray-700 rounded cursor-pointer accent-cyan-400"
           />
-          <div className="flex justify-between text-xs text-gray-300">
+          <div className="flex justify-between text-xs text-gray-400">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between">
           <button
             onClick={handlePrev}
-            className="p-2 hover:bg-cyan-700 rounded-full transition"
+            className="p-2 hover:bg-cyan-700/50 rounded border border-cyan-500/50 transition"
           >
             <SkipBack size={20} />
           </button>
@@ -189,7 +215,7 @@ export default function NEOAmpPlayer({
           <button
             onClick={togglePlayPause}
             disabled={isLoading}
-            className="p-3 bg-cyan-500 hover:bg-cyan-600 rounded-full transition disabled:opacity-50"
+            className="p-3 bg-cyan-600 hover:bg-cyan-500 rounded border border-cyan-400 transition disabled:opacity-50"
           >
             {isLoading ? (
               <Music size={24} className="animate-spin" />
@@ -202,12 +228,12 @@ export default function NEOAmpPlayer({
 
           <button
             onClick={handleNext}
-            className="p-2 hover:bg-cyan-700 rounded-full transition"
+            className="p-2 hover:bg-cyan-700/50 rounded border border-cyan-500/50 transition"
           >
             <SkipForward size={20} />
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-2">
             <Volume2 size={16} />
             <input
               type="range"
@@ -216,7 +242,7 @@ export default function NEOAmpPlayer({
               step="0.1"
               value={volume}
               onChange={handleVolumeChange}
-              className="w-20 h-1 bg-gray-700 rounded cursor-pointer accent-cyan-400"
+              className="w-16 h-1 bg-gray-700 rounded cursor-pointer accent-cyan-400"
             />
           </div>
         </div>
@@ -224,131 +250,147 @@ export default function NEOAmpPlayer({
     );
   }
 
-  // Full variant
+  // Full variant - NEO AMP desktop style
   return (
-    <div className="w-full bg-gradient-to-br from-black via-gray-900 to-cyan-900 rounded-lg p-6 text-white">
-      <audio
-        ref={audioRef}
-        src={currentTrack.url}
-        crossOrigin="anonymous"
-      />
+    <div className="w-full bg-gradient-to-b from-slate-950 via-cyan-950 to-slate-950 rounded-lg p-6 text-white border border-cyan-500/30 shadow-2xl" style={{ boxShadow: '0 0 30px rgba(0, 217, 255, 0.3)' }}>
+      <audio ref={audioRef} src={currentTrack.url} crossOrigin="anonymous" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Album Art */}
-        <div className="flex justify-center items-center">
-          <motion.div
-            animate={isPlaying ? { rotate: 360 } : { rotate: 0 }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          >
-            {currentTrack.coverUrl ? (
-              <img
-                src={currentTrack.coverUrl}
-                alt={currentTrack.album}
-                className="w-40 h-40 rounded-lg shadow-lg object-cover"
-              />
-            ) : (
-              <div className="w-40 h-40 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg">
-                <Music size={64} className="text-white opacity-50" />
-              </div>
-            )}
-          </motion.div>
+      <div className="space-y-6">
+        {/* Visualizer */}
+        <div className="w-full h-32 bg-gradient-to-b from-cyan-900/30 to-slate-900/50 rounded border border-cyan-500/40 p-4 flex items-end gap-1 justify-center" style={{ boxShadow: 'inset 0 0 20px rgba(0, 217, 255, 0.1)' }}>
+          {visualizerBars.map((height, i) => (
+            <motion.div
+              key={i}
+              className="flex-1 bg-gradient-to-t from-cyan-500 to-cyan-300 rounded-sm"
+              animate={{ height: `${Math.max(10, height * 100)}%` }}
+              transition={{ duration: 0.1 }}
+              style={{ boxShadow: '0 0 10px rgba(0, 217, 255, 0.6)' }}
+            />
+          ))}
         </div>
 
-        {/* Controls & Info */}
-        <div className="lg:col-span-2 flex flex-col justify-center space-y-4">
-          {/* Now Playing */}
-          <div>
-            <h2 className="text-3xl font-bold text-cyan-300">{currentTrack.title}</h2>
-            <p className="text-xl text-gray-300">{currentTrack.artist}</p>
-            <p className="text-sm text-gray-400">{currentTrack.album}</p>
-          </div>
-
-          {/* Progress Bar */}
+        {/* Controls Row 1 - Intensity & Sliders */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
+            <label className="text-sm text-cyan-400 font-semibold">INTENSITY</label>
             <input
               type="range"
               min="0"
-              max={duration || 0}
-              value={currentTime}
-              onChange={handleSeek}
-              className="w-full h-2 bg-gray-700 rounded cursor-pointer accent-cyan-400"
+              max="1"
+              step="0.1"
+              value={intensity}
+              onChange={(e) => setIntensity(parseFloat(e.target.value))}
+              className="w-full h-1 bg-gray-700 rounded cursor-pointer accent-cyan-400"
             />
-            <div className="flex justify-between text-sm text-gray-400">
-              <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(duration)}</span>
-            </div>
+            <div className="text-xs text-gray-400">{(intensity * 100).toFixed(0)}%</div>
           </div>
 
-          {/* Media Controls */}
-          <div className="flex items-center justify-center gap-4">
-            <button
-              onClick={handlePrev}
-              className="p-3 hover:bg-cyan-700 rounded-full transition"
-            >
-              <SkipBack size={28} />
-            </button>
-
-            <button
-              onClick={togglePlayPause}
-              disabled={isLoading}
-              className="p-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-full transition disabled:opacity-50 shadow-lg"
-            >
-              {isLoading ? (
-                <Music size={32} className="animate-spin" />
-              ) : isPlaying ? (
-                <Pause size={32} />
-              ) : (
-                <Play size={32} />
-              )}
-            </button>
-
-            <button
-              onClick={handleNext}
-              className="p-3 hover:bg-cyan-700 rounded-full transition"
-            >
-              <SkipForward size={28} />
-            </button>
-
-            {/* Volume Control */}
-            <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-600">
-              <Volume2 size={20} />
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={volume}
-                onChange={handleVolumeChange}
-                className="w-24 h-1 bg-gray-700 rounded cursor-pointer accent-cyan-400"
-              />
-            </div>
+          <div className="space-y-2">
+            <label className="text-sm text-cyan-400 font-semibold">VOLUME</label>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value={volume}
+              onChange={handleVolumeChange}
+              className="w-full h-1 bg-gray-700 rounded cursor-pointer accent-cyan-400"
+            />
+            <div className="text-xs text-gray-400">{(volume * 100).toFixed(0)}%</div>
           </div>
         </div>
-      </div>
 
-      {/* Playlist */}
-      <div className="mt-8 pt-6 border-t border-gray-700">
-        <h3 className="text-lg font-semibold mb-4 text-cyan-300">Playlist</h3>
-        <div className="space-y-2 max-h-48 overflow-y-auto">
-          {tracks.map((track, index) => (
-            <button
-              key={track.id}
-              onClick={() => handleTrackClick(index)}
-              className={`w-full p-3 rounded text-left transition ${
-                index === currentIndex
-                  ? 'bg-cyan-600 text-white'
-                  : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                {index === currentIndex && isPlaying && (
-                  <div className="w-2 h-2 bg-cyan-300 rounded-full animate-pulse" />
-                )}
-                <span className="font-semibold">{track.title}</span>
-                <span className="text-xs text-gray-500">• {track.artist}</span>
-              </div>
-            </button>
-          ))}
+        {/* Progress Bar */}
+        <div className="space-y-2">
+          <input
+            type="range"
+            min="0"
+            max={duration || 0}
+            value={currentTime}
+            onChange={handleSeek}
+            className="w-full h-2 bg-gray-700 rounded cursor-pointer accent-cyan-400"
+          />
+          <div className="flex justify-between text-xs text-cyan-400 font-mono">
+            <span>{formatTime(currentTime)}</span>
+            <span>{formatTime(duration)}</span>
+          </div>
+        </div>
+
+        {/* Track Info */}
+        <div className="space-y-2 border-t border-cyan-500/30 pt-4">
+          <h2 className="text-2xl font-bold text-cyan-300">{currentTrack.title}</h2>
+          <p className="text-gray-300">{currentTrack.artist}</p>
+          <p className="text-sm text-gray-400">{currentTrack.album}</p>
+        </div>
+
+        {/* Playback Controls */}
+        <div className="flex items-center justify-center gap-3 bg-slate-900/50 rounded border border-cyan-500/30 p-4">
+          <button
+            onClick={handlePrev}
+            className="p-3 hover:bg-cyan-600/50 rounded border border-cyan-500/50 transition"
+          >
+            <SkipBack size={24} />
+          </button>
+
+          <button
+            onClick={togglePlayPause}
+            disabled={isLoading}
+            className="p-4 bg-gradient-to-r from-cyan-600 to-cyan-400 hover:from-cyan-500 hover:to-cyan-300 rounded border-2 border-cyan-300 transition disabled:opacity-50"
+            style={{ boxShadow: '0 0 20px rgba(0, 217, 255, 0.5)' }}
+          >
+            {isLoading ? (
+              <Music size={28} className="animate-spin" />
+            ) : isPlaying ? (
+              <Pause size={28} />
+            ) : (
+              <Play size={28} />
+            )}
+          </button>
+
+          <button
+            onClick={handleNext}
+            className="p-3 hover:bg-cyan-600/50 rounded border border-cyan-500/50 transition"
+          >
+            <SkipForward size={24} />
+          </button>
+
+          <div className="ml-4 pl-4 flex items-center gap-2 border-l border-cyan-500/30">
+            <Zap size={20} className="text-cyan-400" />
+            <span className="text-sm font-mono text-cyan-300">NEO-AMP</span>
+          </div>
+        </div>
+
+        {/* Playlist */}
+        <div className="space-y-2 border-t border-cyan-500/30 pt-4">
+          <h3 className="text-sm font-semibold text-cyan-400 uppercase tracking-widest">Playlist</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+            {tracks.map((track, index) => (
+              <button
+                key={track.id}
+                onClick={() => {
+                  setCurrentIndex(index);
+                  setCurrentTime(0);
+                  setIsPlaying(true);
+                  onTrackChange?.(index);
+                }}
+                className={`p-3 rounded text-left text-sm transition border ${
+                  index === currentIndex
+                    ? 'bg-cyan-600/50 border-cyan-400 text-cyan-100'
+                    : 'bg-slate-900/50 border-cyan-500/30 hover:bg-slate-800/50 text-gray-300'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {index === currentIndex && isPlaying && (
+                    <div className="w-1.5 h-1.5 bg-cyan-300 rounded-full animate-pulse" />
+                  )}
+                  <div className="flex-1 truncate">
+                    <div className="font-semibold">{track.title}</div>
+                    <div className="text-xs text-gray-500">{track.artist}</div>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
