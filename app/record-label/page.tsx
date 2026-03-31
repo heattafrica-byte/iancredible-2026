@@ -57,9 +57,9 @@ export default function RecordLabelPage() {
       id: track.id,
       title: track.title,
       artist: track.artistName || 'Unknown Artist',
-      album: track.albumName || 'Unknown Album',
+      album: track.description || 'Track',
       url: track.audioUrl || '',
-      duration: track.duration || 0,
+      duration: 0,
       coverUrl: track.coverArt,
     }
     setSelectedTrack(neoTrack)
