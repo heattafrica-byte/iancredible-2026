@@ -56,7 +56,7 @@ export default function NEOAmpPlayer({
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 256;
 
-      const source = audioContext.createMediaElementAudioSource(audioRef.current);
+      const source = (audioContext as any).createMediaElementAudioSource(audioRef.current);
       source.connect(analyser);
       analyser.connect(audioContext.destination);
 
