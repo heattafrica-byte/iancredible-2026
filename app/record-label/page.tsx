@@ -48,7 +48,7 @@ export default function RecordLabelPage() {
     artist: track.artistName || 'Unknown Artist',
     album: track.description || 'Track',
     url: track.audioUrl || '',
-    duration: track.duration || 0,
+    duration: 0,
     coverUrl: track.coverArt,
   }))
 
