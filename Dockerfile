@@ -1,6 +1,4 @@
 # Build stage
-# Using Node.js 22-bookworm-slim for minimal vulnerabilities
-# hadolint ignore=DL3007
 FROM node:22-bookworm-slim AS builder
 
 # Build-time environment arguments
@@ -38,8 +36,6 @@ COPY . .
 RUN npm run build
 
 # Production stage
-# Using Node.js 22-bookworm-slim for minimal vulnerabilities
-# hadolint ignore=DL3007
 FROM node:22-bookworm-slim
 
 WORKDIR /app
