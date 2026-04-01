@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:22-bookworm-slim AS builder
 
 # Build-time environment arguments
 ARG NEXT_PUBLIC_FIREBASE_API_KEY
@@ -36,7 +36,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine
+FROM node:22-bookworm-slim
 
 WORKDIR /app
 
