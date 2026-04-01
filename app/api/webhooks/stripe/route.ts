@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { handlePaystackWebhook, verifyWebhookSignature } from '@/lib/stripe-utils'
 
+// Mark as dynamic to prevent static generation
+export const dynamic = 'force-dynamic'
+
 const webhookSecret = process.env.PAYSTACK_WEBHOOK_SECRET || ''
 
 export async function POST(request: NextRequest) {

@@ -3,6 +3,9 @@ import app, { auth, db } from '@/lib/firebase'
 import { getAuth } from 'firebase-admin/auth'
 import { getFirestore } from 'firebase-admin/firestore'
 
+// Mark as dynamic to prevent static generation
+export const dynamic = 'force-dynamic'
+
 // This is a health check endpoint for the API
 export async function GET(request: NextRequest) {
   return NextResponse.json({
