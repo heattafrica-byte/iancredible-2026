@@ -62,7 +62,7 @@ export default function NEOAmpPlayer({
 
       audioContextRef.current = audioContext;
       analyserRef.current = analyser;
-    } catch (e) {
+    } catch (err: unknown) {
       console.log('Audio context not supported');
     }
   }, []);
@@ -77,7 +77,7 @@ export default function NEOAmpPlayer({
 
       const scaledBars = Array.from(dataArray)
         .slice(0, 32)
-        .map(v => (v / 255) * intensity);
+        .map((v: number) => (v / 255) * intensity);
       
       setVisualizerBars(scaledBars);
       requestAnimationFrame(animate);
@@ -258,7 +258,7 @@ export default function NEOAmpPlayer({
       <div className="space-y-6">
         {/* Visualizer */}
         <div className="w-full h-32 bg-gradient-to-b from-cyan-900/30 to-slate-900/50 rounded border border-cyan-500/40 p-4 flex items-end gap-1 justify-center" style={{ boxShadow: 'inset 0 0 20px rgba(0, 217, 255, 0.1)' }}>
-          {visualizerBars.map((height, i) => (
+          {visualizerBars.map((height: number, i: number) => (
             <motion.div
               key={i}
               className="flex-1 bg-gradient-to-t from-cyan-500 to-cyan-300 rounded-sm"
@@ -364,7 +364,7 @@ export default function NEOAmpPlayer({
         <div className="space-y-2 border-t border-cyan-500/30 pt-4">
           <h3 className="text-sm font-semibold text-cyan-400 uppercase tracking-widest">Playlist</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-40 overflow-y-auto">
-            {tracks.map((track, index) => (
+            {tracks.map((track: Track, index: number) => (
               <button
                 key={track.id}
                 onClick={() => {
