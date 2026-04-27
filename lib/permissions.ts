@@ -1,18 +1,14 @@
-import { useAuth, UserRole } from './auth-context'
+// Permission utilities for user role management
+// Note: These are currently unused in the static portfolio but retained for future auth implementation
+
+export type UserRole = 'admin' | 'artist' | 'user'
 
 /**
  * Check if user has a specific role
  */
 export function useUserRole(requiredRole: UserRole | UserRole[]) {
-  const { user } = useAuth()
-
-  if (!user) return false
-
-  if (Array.isArray(requiredRole)) {
-    return requiredRole.includes(user.role)
-  }
-
-  return user.role === requiredRole
+  // Placeholder for future auth context integration
+  return false
 }
 
 /**
@@ -37,24 +33,16 @@ export function checkPermission(
   permission: string
 ): boolean {
   const permissions: Record<UserRole, string[]> = {
-    member: [
+    user: [
       'read:tracks',
       'read:artists',
       'read:own-profile',
-      'update:own-profile',
-      'create:submission', // Allow members to submit tracks
-      'read:own-submissions',
-      'create:track',
-      'update:own-tracks',
     ],
     artist: [
       'read:tracks',
       'read:artists',
       'read:own-profile',
       'update:own-profile',
-      'create:submission',
-      'read:own-submissions',
-      'read:own-tracks',
       'create:track',
       'update:own-tracks',
     ],
@@ -72,6 +60,6 @@ export function checkPermission(
  * Hook to check if user can perform an action
  */
 export function useCanPerform(action: string) {
-  const { user } = useAuth()
-  return checkPermission(user?.role ?? null, action)
+  // Placeholder for future auth context integration
+  return false
 }
