@@ -70,22 +70,7 @@ export default function Navigation({ currentPath, onNavigate }: NavigationProps)
 
           {/* Auth Buttons */}
           <div className="flex gap-4 ml-4 border-l border-neon-cyan/30 pl-4">
-            <motion.a
-              href="/auth/login"
-              className="text-sm font-semibold text-neon-cyan hover:text-neon-blue transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Login
-            </motion.a>
-            <motion.a
-              href="/auth/signup"
-              className="text-sm font-semibold px-4 py-2 rounded-lg bg-gradient-to-r from-neon-cyan to-neon-blue text-dark-bg hover:shadow-lg hover:shadow-neon-cyan/50 transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Sign Up
-            </motion.a>
+            {/* Auth removed for free-tier deployment */}
           </div>
         </div>
 
@@ -130,20 +115,7 @@ export default function Navigation({ currentPath, onNavigate }: NavigationProps)
 
             {/* Mobile Auth Buttons */}
             <div className="border-t border-neon-cyan/30 pt-4 mt-4 space-y-2">
-              <motion.a
-                href="/auth/login"
-                className="block w-full text-center text-sm font-semibold text-neon-cyan hover:text-neon-blue py-2 px-3 rounded transition-colors"
-                whileHover={{ backgroundColor: 'rgba(0, 217, 255, 0.1)' }}
-              >
-                Login
-              </motion.a>
-              <motion.a
-                href="/auth/signup"
-                className="block w-full text-center text-sm font-semibold px-4 py-2 rounded-lg bg-gradient-to-r from-neon-cyan to-neon-blue text-dark-bg hover:shadow-lg hover:shadow-neon-cyan/50 transition-all"
-                whileHover={{ scale: 1.05 }}
-              >
-                Sign Up
-              </motion.a>
+              {/* Auth removed for free-tier deployment */}
             </div>
           </div>
         </motion.div>

@@ -19,20 +19,6 @@ out/
 .env.development.local
 .env.test.local
 
-# Firebase
-.firebase/
-.firebaserc
-firebase-debug.log
-firebase-debug.*.log
-.firebase.json
-/emulator-ui/
-/firebase-*.zip
-
-# Firebase Functions
-/functions/node_modules/
-/functions/.env
-/functions/package-lock.json
-
 # Service account keys (NEVER commit these)
 /service-account-key.json
 service-account-*.json
@@ -59,16 +45,10 @@ coverage/
 .cache/
 .vercel/
 .turbo/
-*.log
 npm-debug.log*
 yarn-debug.log*
->>>>>>> e3bd1906363c4276dcdc80ff87f72ca0d3630d15
 yarn-error.log*
 
 # Environment files (local configs)
-/.env.*
-<<<<<<< HEAD
->>>>>>> 16b9009f852e67df3b0c99f7d651c3206f928b36
-=======
->>>>>>> e3bd1906363c4276dcdc80ff87f72ca0d3630d15
+.env.*
 __pycache__/

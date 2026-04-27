@@ -73,13 +73,7 @@ const nextConfig = {
 
   // Experimental optimizations
   experimental: {
-    optimizePackageImports: [
-      '@firebase/app',
-      '@firebase/auth',
-      '@firebase/firestore',
-      '@firebase/storage',
-      'framer-motion',
-    ],
+    optimizePackageImports: ['framer-motion'],
   },
 };
 

@@ -1,8 +1,0 @@
-{
-  "name": "IntelliMix AI",
-  "description": "An intelligent music mixdown engineering app that receives audio separates, balances each channel's volume, compression, and EQ, and provides thorough insights to empower and educate the user. Features an optional second stage for creative FX and can export insights and a stereo WAV mixdown.",
-  "requestFramePermissions": [
-    "microphone",
-    "geolocation"
-  ]
-}
