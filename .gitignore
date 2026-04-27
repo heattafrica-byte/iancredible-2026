@@ -52,3 +52,5 @@ yarn-error.log*
 # Environment files (local configs)
 .env.*
 __pycache__/
+node_modules/
+.next/
