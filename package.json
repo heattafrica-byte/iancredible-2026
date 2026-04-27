@@ -6,35 +6,25 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "deploy:rules": "node scripts/deploy-rules.js dev",
-    "deploy:rules:prod": "node scripts/deploy-rules.js prod"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.2.2",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "autoprefixer": "^10.4.16",
-    "axios": "^1.13.6",
     "date-fns": "^4.1.0",
-    "firebase": "^12.10.0",
-    "firebase-admin": "^13.7.0",
     "framer-motion": "^10.16.4",
     "lucide-react": "^1.7.0",
-    "next": "^14.1.0",
-    "paystack": "^2.0.1",
+    "next": "^16.2.4",
     "postcss": "^8.4.32",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-google-recaptcha-v3": "^1.10.1",
-    "react-hook-form": "^7.71.2",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3",
-    "zod": "^4.3.6"
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
-    "eslint-config-next": "^14.1.0"
+    "eslint-config-next": "^16.2.4"
   }
 }

@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import app, { auth, db } from '@/lib/firebase'
-import { getAuth } from 'firebase-admin/auth'
-import { getFirestore } from 'firebase-admin/firestore'
 
 // Mark as dynamic to prevent static generation
 export const dynamic = 'force-dynamic'
@@ -10,7 +7,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   return NextResponse.json({
     status: 'ok',
-    message: 'Record Label API is running',
+    message: 'Portfolio API is running',
     timestamp: new Date().toISOString(),
   })
 }
