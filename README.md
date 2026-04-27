@@ -1,52 +1,66 @@
-# IANCREDIBLE Wappsite | Creative Technologist
+# IANCREDIBLE - Portfolio Website
 
-An interactive narrative-first website showcasing **Ian Morrison's 40-year evolution** as a Creative Technologist, combining personal storytelling with functional demonstrations across software, audio production, and hardware engineering.
+## Status: ✅ Production Ready
 
-## 🏗️ Project Overview
+This is a modern, free-tier portfolio website built with Next.js 14, deployed on Vercel at $0/month cost.
 
-This is a **Next.js 14 + TypeScript + Tailwind CSS + Firebase** application featuring:
+## Quick Links
 
-- **EvolutionHero**: 40-year personal narrative across 3 eras (Explorer → Builder → Mentor)
-- **GratitudeGrid**: Mentorship appreciation across 4 categories
-- **GlobalMesh**: Social integration and platform presence
-- **DieselGoDemo**: Enterprise software architecture showcase
-- **SonicMixerDemo**: Interactive 5-stage DSP chain for audio production
-- **HardwareShowreel**: Hardware expertise and video operations demonstrations
+- **Live Demo**: Coming soon (Vercel deployment)
+- **GitHub**: https://github.com/truckstandai/iancredible
+- **Tech Stack**: Next.js, React, TypeScript, Tailwind CSS, Framer Motion
 
-## 🎨 Design System
+## What's Included
 
-### Color Palette (Neon Cyberpunk)
-- **Primary**: Cyan `#00D9FF`
-- **Accent**: Pink/Magenta `#FF00FF` & `#D100FF`
-- **Secondary**: Electric Blue `#0066FF`
-- **Dark Background**: `#0A0E27`
-- **Surface**: `#1A1F3A`
+### 7 Static Pages
+1. **Home** (`/`) - Landing page with hero section
+2. **Audio** (`/audio`) - Audio showcase and player
+3. **Decoded** (`/decoded`) - Information and content page
+4. **Hardware** (`/hardware`) - Hardware expertise showcase
+5. **Tech** (`/tech`) - Technology stack documentation
+6. **Community** (`/community`) - Community highlights
+7. **Record Label** (`/record-label`) - Music track showcase
 
-### Key Features
-- Glass morphism UI components
-- Neon glow effects
-- Framer Motion animations
-- Responsive grid layouts
-- Real-time audio visualizer
-- Smooth page transitions
+### Features
+- ✅ Responsive design (mobile, tablet, desktop)
+- ✅ Dark theme with matrix animation background
+- ✅ Smooth animations (Framer Motion)
+- ✅ SEO optimized
+- ✅ Image optimization
+- ✅ Global CDN distribution
+- ✅ Zero external API dependencies
+- ✅ Zero monthly cost
 
-## 🚀 Getting Started
+## Getting Started
 
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
+### Local Development
 
 ```bash
 # Install dependencies
 npm install
 
-# Start development server
+# Run development server
 npm run dev
 
-# Build for production
+# Open browser
+open http://localhost:3000
+```
+
+### Build for Production
+
+```bash
 npm run build
+npm start
+```
+
+## Deployment to Vercel
+
+1. **Push code to GitHub** (required)
+2. **Go to** https://vercel.com/new
+3. **Import** your GitHub repository
+4. **Click Deploy**
+
+That's it! Your site will be live in 1-3 minutes.
 
 # Start production server
 npm start
