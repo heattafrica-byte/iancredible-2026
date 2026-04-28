@@ -27,4 +27,7 @@
     "eslint": "^8.56.0",
     "eslint-config-next": "^16.2.4"
   }
-}
+,
+"overrides": {
+  "eslint": "^8.56.0"
+}}
