@@ -3,12 +3,5 @@
   "buildCommand": "next build",
   "devCommand": "next dev",
   "outputDirectory": ".next",
-  "installCommand": "npm install",
-  "regions": ["iad1"],
-  "functions": {
-    "api/**": {
-      "memory": 512,
-      "maxDuration": 60
-    }
-  }
+  "installCommand": "npm install"
 }
